@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14...3.22)
+cmake_minimum_required(VERSION 3.14)
 
 # ---- Project ----
 
@@ -36,7 +36,7 @@ CPMAddPackage(
 CPMAddPackage(
         NAME cxx_state_tree
         GITHUB_REPOSITORY ZigRazor/CXXStateTree
-        GIT_TAG v0.4.0
+        GIT_TAG v0.4.0  # Back to v0.4.0
 )
 
 # ---- Add source files ----
@@ -58,6 +58,7 @@ target_compile_options(${PROJECT_NAME} PUBLIC "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>
 
 # Link dependencies
 target_link_libraries(${PROJECT_NAME} PRIVATE fmt::fmt)
+target_include_directories(${PROJECT_NAME} PRIVATE ${cxx_state_tree_SOURCE_DIR}/include)
 
 target_include_directories(
         ${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>

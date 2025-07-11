@@ -1,8 +1,10 @@
 #include <fmt/format.h>
-#include <unistd.h>
-#include <iostream>
 #include <greeter/greeter.h>
+#include <unistd.h>
+
+#include <CXXStateTree/Builder.hpp>
 #include <CXXStateTree/StateTree.hpp>
+#include <iostream>
 using namespace CXXStateTree;
 
 using namespace greeter;
@@ -10,6 +12,8 @@ using namespace greeter;
 Greeter::Greeter(std::string _name) : name(std::move(_name)) {}
 
 std::string Greeter::greet(LanguageCode lang) const {
+  demo_state_machine();
+
   switch (lang) {
     default:
     case LanguageCode::EN:
@@ -23,24 +27,22 @@ std::string Greeter::greet(LanguageCode lang) const {
     case LanguageCode::ZH:
       return fmt::format("{}您好！", name);
   }
-
-  demo_state_machine();
 }
 
-void demo_state_machine() {
+void greeter::demo_state_machine() {
   auto machine = Builder()
-      .initial("Idle")
-  .state("Idle", [](State& s) {
-    s.on("Start", "Running", nullptr, []() {
-      std::cout << "Idle --> Running" << std::endl;
-    });
-  })
-  .state("Running", [](State& s) {
-    s.on("Stop", "Idle", nullptr, []() {
-      std::cout << "Running --> Idle" << std::endl;
-    });
-  })
-  .build();
+                     .initial("Idle")
+                     .state("Idle",
+                            [](State& s) {
+                              s.on("Start", "Running", nullptr,
+                                   []() { std::cout << "Idle --> Running" << std::endl; });
+                            })
+                     .state("Running",
+                            [](State& s) {
+                              s.on("Stop", "Idle", nullptr,
+                                   []() { std::cout << "Running --> Idle" << std::endl; });
+                            })
+                     .build();
 
   machine.send("Start");
   std::cout << "Running for a while ..." << std::endl;
